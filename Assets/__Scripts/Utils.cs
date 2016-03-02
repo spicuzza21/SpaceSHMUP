@@ -31,12 +31,12 @@ public class Utils : MonoBehaviour
 	public static Bounds CombineBoundsOfChildren(GameObject go) 
 	{
 		Bounds b = new Bounds (Vector3.zero, Vector3.zero);
-		if (go.renderer != null) {
-			b = BoundsUnion(b, go.renderer.bounds);
+		if (go.GetComponent<Renderer>() != null) {
+			b = BoundsUnion(b, go.GetComponent<Renderer>().bounds);
 		}
 
-		if (go.collider != null) {
-			b = BoundsUnion(b, go.collider.bounds);
+		if (go.GetComponent<Collider>() != null) {
+			b = BoundsUnion(b, go.GetComponent<Collider>().bounds);
 		}
 
 		foreach (Transform t in go.transform) {
@@ -191,9 +191,46 @@ public class Utils : MonoBehaviour
 		return (Vector3.zero);  // if we get here something went wrong
 	
 	} // end BoundsInBoundsCheck
+
+	// This function will iteratively climb up the transform.parent tree
+	//   until it either finds a parent with a tag != "Untagged" or no parent
+	public static GameObject FindTaggedParent(GameObject go) {              // 1
+		// If this gameObject has a tag
+		if (go.tag != "Untagged") {                                         // 2
+			// then return this gameObject
+			return(go);
+		}
+		// If there is no parent of this Transform
+		if (go.transform.parent == null) {                                  // 3
+			// We've reached the top of the hierarchy with no interesting tag
+			// So return null
+			return( null );
+		} 
+		// Otherwise, recursively climb up the tree
+		        return( FindTaggedParent( go.transform.parent.gameObject ) );       // 4
+		    }
+	    // This version of the function handles things if a Transform is passed in
+	  public static GameObject FindTaggedParent(Transform t) {                // 5
+		        return( FindTaggedParent( t.gameObject ) );
+			} 
+
 	
-	
-	
-}// End of Util Class
+// End of Util Class
+
+//=========================== Materials Functions ============================\\
+
+    // Returns a list of all Materials on this GameObject or its children
+    static public Material[] GetAllMaterials( GameObject go ) {
+	        List<Material> mats = new List<Material>();
+	        if (go.renderer != null) {
+		            mats.Add(go.renderer.material);
+		        }
+	        foreach( Transform t in go.transform ) {
+		            mats.AddRange( GetAllMaterials( t.gameObject ) );
+		        }
+	        return( mats.ToArray() );
+	    }
+}
+
 
 

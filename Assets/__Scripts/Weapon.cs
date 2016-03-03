@@ -45,8 +45,12 @@ public class Weapon : MonoBehaviour {
 	    public GameObject         collar;
 	    public float              lastShot; // Time last shot was fired
 
+		void Awake(){
+				collar = transform.Find("Collar").gameObject;
+	}
+
+
 	    void Start() {
-		        collar = transform.Find("Collar").gameObject;
 		        // Call SetType() properly for the default _type
 		        SetType( _type );
 
@@ -107,19 +111,19 @@ public class Weapon : MonoBehaviour {
 
 	    public Projectile MakeProjectile() {
 		        GameObject go = Instantiate( def.projectilePrefab ) as GameObject;
-		        if ( transform.parent.gameObject.tag == "Hero" ) {
-			            go.tag = "ProjectileHero";
-			            go.layer = LayerMask.NameToLayer("ProjectileHero");
-		        } else {
-			            go.tag = "ProjectileEnemy";
-			            go.layer = LayerMask.NameToLayer("ProjectileEnemy");
+		if (transform.parent.gameObject.tag == "Hero") {
+			go.tag = "ProjectileHero";
+			go.layer = LayerMask.NameToLayer ("ProjectileHero");
+		} else {
+			go.tag = "ProjectileEnemy";
+			go.layer = LayerMask.NameToLayer("ProjectileEnemy");
 			    }
-		        go.transform.position = collar.transform.position;
-		        go.transform.parent = PROJECTILE_ANCHOR;
-		        Projectile p = go.GetComponent<Projectile>();
-		        p.type = type;
-		        lastShot = Time.time;
-		        return( p );
+		  go.transform.position = collar.transform.position;
+		  go.transform.parent = PROJECTILE_ANCHOR;
+		  Projectile p = go.GetComponent<Projectile>();
+		  p.type = type;
+		  lastShot = Time.time;
+		  return( p );
 
 		}
 }

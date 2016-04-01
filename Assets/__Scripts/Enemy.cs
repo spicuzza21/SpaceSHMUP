@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Enemy : MonoBehaviour {
 
-	public float      speed = 10f;     // The speed in m/s
+		public float      speed = 10f;     // The speed in m/s
 	    public float      fireRate = 0.3f; // Seconds/shot (Unused)
 	    public float      health = 10;
 	    public int        score = 100; // Points earned for destroying this
@@ -81,7 +81,7 @@ public class Enemy : MonoBehaviour {
 		switch (other.tag) {
 		case "ProjectileHero":
 			Projectile p = other.GetComponent<Projectile> ();
-			            // Enemies don't take damage unless they're onscreen
+			// Enemies don't take damage unless they're onscreen
 			// This stops the player from shooting them before they are visible
 			bounds.center = transform.position + boundsCenterOffset;
 			if (bounds.extents == Vector3.zero || Utils.ScreenBoundsCheck (bounds, BoundsTest.offScreen) != Vector3.zero) {

@@ -13,9 +13,9 @@ public class Part {
 	    // Caching like this makes it faster and easier to find these later
 	    public GameObject   go;           // The GameObject of this part
 	    public Material     mat;          // The Material to show damage
-} 
+}
 
-public class Enemy_4 : Enemy {
+public class Enemy4 : Enemy {
 		// Enemy_4 will start offscreen and then pick a random point on screen to
 	    //   move to. Once it has arrived, it will pick another random point and
 	    //   continue until the player has shot it down.
@@ -23,7 +23,7 @@ public class Enemy_4 : Enemy {
 	    public Vector3[]        points;  // Stores the p0 & p1 for interpolation
 	    public float            timeStart;  // Birth time for this Enemy_4
 	    public float            duration = 4;  // Duration of movement
-		public Part[]			parts;
+	public Part[] parts;
 
 	    void Start () {
 		        points = new Vector3[2];
@@ -33,15 +33,16 @@ public class Enemy_4 : Enemy {
 		        points[1] = pos;
 
 		        InitMovement();
-				// Cache GameObject & Material of each Part in parts
+
+		// Cache GameObject & Material of each Part in parts
 		        Transform t;
 		        foreach(Part prt in parts) {
 			            t = transform.Find(prt.name);
 			            if (t != null) {
 				                prt.go = t.gameObject;
-								prt.mat = prt.go.GetComponent<Renderer>().material;
+				                prt.mat = prt.go.GetComponent<Renderer>().material;
 				            }
-			        } 
+			        }
 		    }
 
 	    void InitMovement() {
@@ -69,8 +70,7 @@ public class Enemy_4 : Enemy {
 			        }
 
 		        u = 1 - Mathf.Pow( 1-u, 2 );         // Apply Ease Out easing to u
-
-			    pos = (1-u)*points[0] + u*points[1]; // Simple linear interpolation
+			pos = (1-u)*points[0] + u*points[1]; // Simple linear interpolation
 		    }
 		// This will override the OnCollisionEnter that is part of Enemy.cs
 	    // Because of the way that MonoBehaviour declares common Unity functions
@@ -78,15 +78,15 @@ public class Enemy_4 : Enemy {
 	    void OnCollisionEnter( Collision coll ) {
 		        GameObject other = coll.gameObject;
 		        switch (other.tag) {
-		        case "ProjectileHero":
-			            Projectile p = other.GetComponent<Projectile>();
+		case "ProjectileHero":
+			Projectile p = other.GetComponent<Projectile> ();
 			            // Enemies don't take damage unless they're on screen
-			            // This stops the player from shooting the
-						bounds.center = transform.position + boundsCenterOffset;
-			            if (bounds.extents == Vector3.zero || Utils.ScreenBoundsCheck(bounds, BoundsTest.offScreen) != Vector3.zero) {
-				                Destroy(other);
-				                break;
-				            }
+			            // This stops the player from shooting them before they are visible
+			bounds.center = transform.position + boundsCenterOffset;
+			if (bounds.extents == Vector3.zero || Utils.ScreenBoundsCheck (bounds, BoundsTest.offScreen) != Vector3.zero) {
+				Destroy (other);
+				break;
+			}
 
 			            // Hurt this Enemy
 			            // Find the GameObject that was hit
@@ -95,8 +95,8 @@ public class Enemy_4 : Enemy {
 			            //   least a contacts[0], and ContactPoints have a reference to
 			            //   thisCollider, which will be the collider for the part of the
 			            //   Enemy_4 that was hit.
-			            GameObject goHit = coll.contacts[0].thisCollider.gameObject;
-			            Part prtHit = FindPart(goHit);
+			GameObject goHit = coll.contacts [0].thisCollider.gameObject;
+			Part prtHit = FindPart (goHit);
 			            if (prtHit == null) { // If prtHit wasn't found
 				                //   ...then it's usually because, very rarely, thisCollider on
 				                //   contacts[0] will be the ProjectileHero instead of the ship
@@ -118,7 +118,7 @@ public class Enemy_4 : Enemy {
 			            // It's not protected, so make it take damage
 			            // Get the damage amount from the Projectile.type & Main.W_DEFS
 			            prtHit.health -= Main.W_DEFS[p.type].damageOnHit;
-					    // Show damage on the part
+						// Show damage on the part
 			            ShowLocalizedDamage(prtHit.mat);
 			            if (prtHit.health <= 0) {
 				                // Instead of Destroying this enemy, disable the damaged part
@@ -182,4 +182,6 @@ public class Enemy_4 : Enemy {
 		        m.color = Color.red;
 		        remainingDamageFrames = showDamageForFrames;
 		    }
-}
+} 
+
+
